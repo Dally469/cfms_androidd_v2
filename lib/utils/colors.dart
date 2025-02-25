@@ -1,0 +1,20 @@
+import 'package:flutter/material.dart';
+
+const primaryColor = Color.fromRGBO(1, 56, 96, 1.0);
+const primaryOverlayColor = Color.fromARGB(68, 2, 48, 71);
+const yellowColor = Color.fromRGBO(255, 183, 3, 1);
+const greyColor1 = Color.fromRGBO(236, 236, 236, 1);
+const orangeColor = Color.fromRGBO(251, 133, 0, 1);
+const redColor = Color.fromARGB(255, 251, 50, 0);
+const redColorOverlay = Color.fromARGB(56, 251, 50, 0);
+const blueSkyColor = Color.fromRGBO(33, 158, 188, 1);
+const blueSkyOverlayColor = Color.fromARGB(62, 33, 157, 188);
+const greenColor = Color.fromARGB(255, 48, 172, 75);
+const greenOverlayColor = Color.fromARGB(88, 48, 172, 75);
+const blackColor = Color.fromRGBO(5, 25, 35, 1);
+const whiteColor = Color.fromRGBO(255, 255, 255, 1);
+const whiteColor1 = Color.fromRGBO(238, 247, 253, 0.5764705882352941);
+const grayColor = Color.fromRGBO(104, 106, 107, 1);
+const transparentColor = Color.fromRGBO(255, 255, 255, 0.10196078431372549);
+const transparentColor1 = Color.fromRGBO(17, 21, 30, 0.1843137254901961);
+const transparentColor2 = Color.fromRGBO(17, 21, 30, 0.3803921568627451);
