@@ -8,6 +8,7 @@ import 'package:cfms/data/repositories/auth_repository.dart';
 import 'package:cfms/data/repositories/language_repository.dart';
 import 'package:cfms/logic/bloc/app_bloc_observer.dart';
 import 'package:cfms/logic/bloc/auth/auth_bloc.dart';
+import 'package:cfms/logic/bloc/country/country_bloc.dart';
 import 'package:cfms/logic/bloc/language/language_bloc.dart';
 import 'package:cfms/logic/bloc/theme/theme_bloc.dart';
 import 'package:cfms/logic/bloc/update/update_bloc.dart';
@@ -26,14 +27,17 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'data/repositories/country_repository.dart';
 import 'data/repositories/update_repository.dart';
+import 'logic/bloc/country/country_event.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await initializeDateFormatting('en', null); // Initialize for English locale
   // Initialize BLoC observer for debugging
   Bloc.observer = AppBlocObserver();
 
@@ -86,13 +90,16 @@ void main() async {
             buildNumber: appState.buildNumber,
           ),
         ),
-        
+       BlocProvider<CountryBloc>(
+          create: (context) =>
+              CountryBloc(countryRepository: CountryRepository()),
+        ),
       ],
       child: LocalizedApp(
         delegate,
         MyApp(
           initialLanguage: selectedLanguage,
-          showHome: appState.showHome,
+          appState: appState,
         ),
       ),
     ),
@@ -146,12 +153,13 @@ Future<AppState> _loadAppState() async {
 
 class MyApp extends StatelessWidget {
   final String initialLanguage;
-  final bool showHome;
+  final AppState appState;
 
   const MyApp({
     super.key,
     required this.initialLanguage,
-    required this.showHome,
+    required this.appState,
+
   });
 
   @override
@@ -179,22 +187,14 @@ class MyApp extends StatelessWidget {
       },
     );
   }
-
-  Widget _buildHomeScreen(BuildContext context) {
-    if (!showHome) {
-      return const Splash();
-    }
-
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, state) {
-        if (state is AuthAuthenticated) {
-          // Check user role for proper dashboard
-          return state.isAdmin ? const AdminDashboard() : const Dashboard();
-        } else {
-          return const Login();
-        }
-      },
-    );
+Widget _buildHomeScreen(BuildContext context) {
+    return appState.showHome
+        ? appState.json == 'no'
+            ? const Login()
+            : appState.isLoggedIn
+                ? const AdminDashboard()
+                : const Dashboard()
+        : const Splash();
   }
 }
 

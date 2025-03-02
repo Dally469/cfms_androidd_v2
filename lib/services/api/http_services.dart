@@ -1,6 +1,8 @@
 // ignore_for_file: depend_on_referenced_packages
 
 import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
 import 'package:cfms/models/cache_model.dart';
 import 'package:cfms/models/donations/donation.dart';
 import 'package:cfms/models/entity_model.dart';
@@ -42,23 +44,6 @@ class HttpService {
         'Accept': 'application/json',
       };
 
-  Future<List<CountryModel>> getCountrySuggestions(String query) async {
-    final prefs = await SharedPreferences.getInstance();
-    final res = await http
-        .get(Uri.parse("$_landingUrl?v=${prefs.getString("version")??'1.0.0'}"));
-    if (res.statusCode == 200) {
-      final List countries = json.decode(res.body);
-      return countries
-          .map((model) => CountryModel.fromJson(model))
-          .where((country) {
-        final lowerName = country.countryName?.toLowerCase();
-        final queryLower = query.toLowerCase();
-        return lowerName!.contains(queryLower);
-      }).toList();
-    } else {
-      throw Exception();
-    }
-  }
 
   Future<List<EntityModel>> getEntitySuggestions(String query) async {
     final prefs = await SharedPreferences.getInstance();

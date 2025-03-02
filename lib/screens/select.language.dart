@@ -64,13 +64,11 @@ class _SelectLanguageState extends State<SelectLanguage> {
                         id: lang.getId(),
                         icon: lang.icon,
                         title: lang.getTitle(),
-                        onTap: () {
+                        onTap: () async {
+                          prefs = await SharedPreferences.getInstance();
                           setState(() {
                             id = lang.id;
-                            // selectedLang = lang.locale!.countryCode!;
-                            // context.locale = lang.locale!;
-                            // controller.onLanguageChanged();
-
+                            prefs.setString("currentLang", lang.getCode());
                             changeLocale(
                                 context, lang.getCode()); // Change to French
                           });

@@ -228,5 +228,7 @@
   "app_txt_are_you_sure": "Are you sure to cancel this cash receipt?",
   "app_txt_cancel_cash_receipt": "Cancel Cash Receipt",
   "app_txt_reason": "Reason",
+  "app_txt_resend_code": "Resend Code",
+  "app_txt_resend_code_not": "Didn't Receive the OTP?",
   "app_txt_end": "End"
 }

@@ -1,5 +1,11 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+   package="com.example.cfms">
+    <queries>
+        <package android:name="net.nyx.printerservice.print"/>
+    </queries>
 <uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.BIND_PRINT_SERVICE"/>
+
 
     <application
         android:label="cfms"

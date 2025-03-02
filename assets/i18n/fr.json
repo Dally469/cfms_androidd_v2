@@ -230,5 +230,7 @@
   "app_txt_are_you_sure": "Etes-vous sûr d'annuler ce reçu de caisse ?",
   "app_txt_cancel_cash_receipt": "Annuler un encaissement",
   "app_txt_reason": "Raison",
+    "app_txt_resend_code": "Renvoyer le code",
+      "app_txt_resend_code_not": "Vous n'avez pas reçu l'OTP ?",
   "app_txt_end": "End"
 }

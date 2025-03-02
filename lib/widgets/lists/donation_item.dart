@@ -21,7 +21,10 @@ class DonationItem extends StatelessWidget {
     required this.amount,
     this.iconColor = primaryOverlayColor,
     this.backgroundColor = whiteColor,
-    this.height = 80, this.onTap, required this.narration, required this.currency,
+    this.height = 90,
+    this.onTap,
+    required this.narration,
+    required this.currency,
   }) : super(key: key);
 
   @override
@@ -89,38 +92,43 @@ class DonationItem extends StatelessWidget {
                                 ),
                               ),
                               Visibility(
-                                visible:amount == "" ,
-                                child: Text("+ ${translate("app_txt_click_to_add_amount")}",
-                                    style: GoogleFonts.poppins(
-                                        color: Colors.black54,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 11)),
+                                visible: amount == "",
+                                child: Container(
+                                  width:
+                                      MediaQuery.of(context).size.width - 185,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5)),
+                                  child: Text(
+                                      "+ ${translate("app_txt_click_to_add_amount")}",
+                                      style: GoogleFonts.poppins(
+                                          color: Colors.black54,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 11)),
+                                ),
                               )
                             ],
                           ),
                         ),
                         Container(
-                          width: 140,
-                          padding: const EdgeInsets.all(8.0),
-                          child: Visibility(
-                            visible: amount != "",
-                                child: Text(
-                            "$currency $amount",
-                            textAlign: TextAlign.end,
-                            style: GoogleFonts.poppins(
-                                  color: blackColor,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 15),
-                          ),
-                              )
-                        )
+                            width: 140,
+                            padding: const EdgeInsets.all(8.0),
+                            child: Visibility(
+                              visible: amount != "",
+                              child: Text(
+                                "$currency $amount",
+                                textAlign: TextAlign.end,
+                                style: GoogleFonts.poppins(
+                                    color: blackColor,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 15),
+                              ),
+                            ))
                       ],
                     )
                   ],
                 ),
               ],
             ),
-
           ],
         ),
       ),

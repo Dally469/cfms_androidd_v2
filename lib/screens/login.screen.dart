@@ -6,10 +6,13 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:another_flushbar/flushbar.dart';
+import 'package:cfms/logic/bloc/country/country_bloc.dart';
+import 'package:cfms/screens/verification.screen.dart';
 import 'package:cfms/widgets/lists/country_item.dart';
 import 'package:cfms/utils/colors.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -23,6 +26,8 @@ import '../../widgets/buttons/loading_button.dart';
 import '../../widgets/texts/heading.dart';
 import 'package:flutter/foundation.dart';
 
+import '../logic/bloc/country/country_event.dart';
+import '../logic/bloc/country/country_state.dart';
 import 'admin/admin.dashboard.screen.dart';
 
 class Login extends StatefulWidget {
@@ -57,8 +62,8 @@ class _LoginState extends State<Login> {
   void initState() {
     super.initState();
     // _gettingPreferences();
+    BlocProvider.of<CountryBloc>(context).add(FetchCountries());
     getUniqueDeviceId();
-    getCountries();
     getLang();
   }
 
@@ -159,16 +164,6 @@ class _LoginState extends State<Login> {
     }
   }
 
-  void getCountries() async {
-    setState(() {
-      _isSettingDashboard = true;
-    });
-    countries = await HttpService().getCountrySuggestions("");
-    setState(() {
-      _isSettingDashboard = false;
-    });
-  }
-
   List<CountryModel> countries = [];
   Future<String> getUniqueDeviceId() async {
     String uniqueDeviceId = '';
@@ -227,399 +222,364 @@ class _LoginState extends State<Login> {
       builder: (context) {
         return AlertDialog(
           title: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              translate("app_txt_app_change"),
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.poppins(
-                                  fontSize: 17, color: primaryColor),
-                            ),
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              translate("app_txt_app_change"),
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(fontSize: 17, color: primaryColor),
+            ),
+          ),
+          content: Padding(
+            padding: const EdgeInsets.all(2.0),
+            child: SizedBox(
+              height: 240,
+              child: Column(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        id = 1;
+                        changeLocale(context, "en");
+
+                        Navigator.pop(context);
+                      });
+                    },
+                    child: Container(
+                      height: 50,
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      margin: const EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        color: whiteColor,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: const [
+                          BoxShadow(
+                            offset: Offset(0.0, 2.0),
+                            color: Color(0xffEDEDED),
+                            blurRadius: 2.0,
                           ),
-                          content: Padding(
-                            padding: const EdgeInsets.all(2.0),
-                            child: SizedBox(
-                              height: 240,
-                              child: Column(
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      setState(() async {
-                                        id = 1;
-                                        changeLocale(context, "en");
-
-                                        Navigator.pop(context);
-                                      });
-                                    },
-                                    child: Container(
-                                      height: 50,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 5),
-                                      margin: const EdgeInsets.all(5),
-                                      decoration: BoxDecoration(
-                                        color: whiteColor,
-                                        borderRadius: BorderRadius.circular(10),
-                                        boxShadow: const [
-                                          BoxShadow(
-                                            offset: Offset(0.0, 2.0),
-                                            color: Color(0xffEDEDED),
-                                            blurRadius: 2.0,
-                                          ),
-                                        ],
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Image.asset(
-                                                "assets/images/icons/eng.png",
-                                                height: 25,
-                                                width: 25,
-                                              ),
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-                                              Text(
-                                                translate('app_txt_english'),
-                                                style: GoogleFonts.poppins(
-                                                    color: blackColor,
-                                                    fontWeight: FontWeight.w300,
-                                                    fontSize: 15),
-                                              )
-                                            ],
-                                          ),
-                                          id == 1
-                                              ? Container(
-                                                  height: 30,
-                                                  margin: const EdgeInsets
-                                                          .symmetric(
-                                                      horizontal: 15),
-                                                  padding:
-                                                      const EdgeInsets.all(2),
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                          shape:
-                                                              BoxShape.circle,
-                                                          color: primaryColor),
-                                                  child: const Center(
-                                                    child: Icon(
-                                                      Icons.check,
-                                                      size: 14,
-                                                      color: whiteColor,
-                                                    ),
-                                                  ),
-                                                )
-                                              : Radio(
-                                                  value: 1,
-                                                  groupValue: id,
-                                                  activeColor: primaryColor,
-                                                  onChanged: (val) {
-                                                    setState(() async {
-                                                      id = 1;
-                                                      changeLocale(
-                                                          context, "en");
-
-                                                      Navigator.pop(context);
-                                                    });
-                                                  },
-                                                )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      setState(() async {
-                                        id = 4;
-                                        changeLocale(context, "fr");
-
-                                        Navigator.pop(context);
-                                      });
-                                    },
-                                    child: Container(
-                                      height: 50,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 5),
-                                      margin: const EdgeInsets.all(5),
-                                      decoration: BoxDecoration(
-                                        color: whiteColor,
-                                        borderRadius: BorderRadius.circular(10),
-                                        boxShadow: const [
-                                          BoxShadow(
-                                            offset: Offset(0.0, 2.0),
-                                            color: Color(0xffEDEDED),
-                                            blurRadius: 2.0,
-                                          ),
-                                        ],
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Image.asset(
-                                                "assets/images/icons/fr.png",
-                                                height: 25,
-                                                width: 25,
-                                              ),
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-                                              Text(
-                                                translate('app_txt_french'),
-                                                style: GoogleFonts.poppins(
-                                                    color: blackColor,
-                                                    fontWeight: FontWeight.w300,
-                                                    fontSize: 15),
-                                              )
-                                            ],
-                                          ),
-                                          id == 4
-                                              ? Container(
-                                                  height: 30,
-                                                  margin: const EdgeInsets
-                                                          .symmetric(
-                                                      horizontal: 15),
-                                                  padding:
-                                                      const EdgeInsets.all(2),
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                          shape:
-                                                              BoxShape.circle,
-                                                          color: primaryColor),
-                                                  child: const Center(
-                                                    child: Icon(
-                                                      Icons.check,
-                                                      size: 14,
-                                                      color: whiteColor,
-                                                    ),
-                                                  ),
-                                                )
-                                              : Radio(
-                                                  value: 4,
-                                                  groupValue: id,
-                                                  activeColor: primaryColor,
-                                                  onChanged: (val) {
-                                                    setState(() async {
-                                                      id = 4;
-                                                      changeLocale(
-                                                          context, "fr");
-
-                                                      Navigator.pop(context);
-                                                    });
-                                                  },
-                                                )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      setState(() async {
-                                        id = 2;
-                                        changeLocale(context, "sw");
-
-                                        Navigator.pop(context);
-                                      });
-                                    },
-                                    child: Container(
-                                      height: 50,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 5),
-                                      margin: const EdgeInsets.all(5),
-                                      decoration: BoxDecoration(
-                                        color: whiteColor,
-                                        borderRadius: BorderRadius.circular(10),
-                                        boxShadow: const [
-                                          BoxShadow(
-                                            offset: Offset(0.0, 2.0),
-                                            color: Color(0xffEDEDED),
-                                            blurRadius: 2.0,
-                                          ),
-                                        ],
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Image.asset(
-                                                "assets/images/icons/swa.png",
-                                                height: 25,
-                                                width: 25,
-                                              ),
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-                                              Text(
-                                                translate("app_txt_swahili"),
-                                                style: GoogleFonts.poppins(
-                                                    color: blackColor,
-                                                    fontWeight: FontWeight.w300,
-                                                    fontSize: 15),
-                                              )
-                                            ],
-                                          ),
-                                          id == 2
-                                              ? Container(
-                                                  height: 30,
-                                                  margin: const EdgeInsets
-                                                          .symmetric(
-                                                      horizontal: 15),
-                                                  padding:
-                                                      const EdgeInsets.all(2),
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                          shape:
-                                                              BoxShape.circle,
-                                                          color: primaryColor),
-                                                  child: const Center(
-                                                    child: Icon(
-                                                      Icons.check,
-                                                      size: 14,
-                                                      color: whiteColor,
-                                                    ),
-                                                  ),
-                                                )
-                                              : Radio(
-                                                  value: 2,
-                                                  groupValue: id,
-                                                  activeColor: primaryColor,
-                                                  onChanged: (val) {
-                                                    setState(() async {
-                                                      id = 2;
-                                                      changeLocale(
-                                                          context, "sw");
-
-                                                      Navigator.pop(context);
-                                                    });
-                                                  },
-                                                )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      setState(() async {
-                                        id = 3;
-                                        changeLocale(context, "rw");
-
-                                        Navigator.pop(context);
-                                      });
-                                    },
-                                    child: Container(
-                                      height: 50,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 5),
-                                      margin: const EdgeInsets.all(5),
-                                      decoration: BoxDecoration(
-                                        color: whiteColor,
-                                        borderRadius: BorderRadius.circular(10),
-                                        boxShadow: const [
-                                          BoxShadow(
-                                            offset: Offset(0.0, 2.0),
-                                            color: Color(0xffEDEDED),
-                                            blurRadius: 2.0,
-                                          ),
-                                        ],
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Image.asset(
-                                                "assets/images/icons/rw_flag.png",
-                                                height: 25,
-                                                width: 25,
-                                              ),
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-                                              Text(
-                                                translate("app_txt_rwanda"),
-                                                style: GoogleFonts.poppins(
-                                                    color: blackColor,
-                                                    fontWeight: FontWeight.w300,
-                                                    fontSize: 15),
-                                              )
-                                            ],
-                                          ),
-                                          id == 3
-                                              ? Container(
-                                                  height: 30,
-                                                  margin: const EdgeInsets
-                                                          .symmetric(
-                                                      horizontal: 15),
-                                                  padding:
-                                                      const EdgeInsets.all(2),
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                          shape:
-                                                              BoxShape.circle,
-                                                          color: primaryColor),
-                                                  child: const Center(
-                                                    child: Icon(
-                                                      Icons.check,
-                                                      size: 14,
-                                                      color: whiteColor,
-                                                    ),
-                                                  ),
-                                                )
-                                              : Radio(
-                                                  value: 3,
-                                                  groupValue: id,
-                                                  activeColor: primaryColor,
-                                                  onChanged: (val) {
-                                                    setState(() async {
-                                                      id = 3;
-                                                      changeLocale(
-                                                          context, "rw");
-
-                                                      Navigator.pop(context);
-                                                    });
-                                                  },
-                                                )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Image.asset(
+                                "assets/images/icons/eng.png",
+                                height: 25,
+                                width: 25,
                               ),
-                            ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                translate('app_txt_english'),
+                                style: GoogleFonts.poppins(
+                                    color: blackColor,
+                                    fontWeight: FontWeight.w300,
+                                    fontSize: 15),
+                              )
+                            ],
                           ),
-                          actions: <Widget>[
-                            TextButton(
-                                child: Text(translate("app_txt_cancel"),
-                                    style: GoogleFonts.poppins(
-                                        fontSize: 17, color: redColor)),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                }),
-                          ],
+                          id == 1
+                              ? Container(
+                                  height: 30,
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 15),
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: primaryColor),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.check,
+                                      size: 14,
+                                      color: whiteColor,
+                                    ),
+                                  ),
+                                )
+                              : Radio(
+                                  value: 1,
+                                  groupValue: id,
+                                  activeColor: primaryColor,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      id = 1;
+                                      changeLocale(context, "en");
+
+                                      Navigator.pop(context);
+                                    });
+                                  },
+                                )
+                        ],
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        id = 4;
+                        changeLocale(context, "fr");
+
+                        Navigator.pop(context);
+                      });
+                    },
+                    child: Container(
+                      height: 50,
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      margin: const EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        color: whiteColor,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: const [
+                          BoxShadow(
+                            offset: Offset(0.0, 2.0),
+                            color: Color(0xffEDEDED),
+                            blurRadius: 2.0,
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Image.asset(
+                                "assets/images/icons/fr.png",
+                                height: 25,
+                                width: 25,
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                translate('app_txt_french'),
+                                style: GoogleFonts.poppins(
+                                    color: blackColor,
+                                    fontWeight: FontWeight.w300,
+                                    fontSize: 15),
+                              )
+                            ],
+                          ),
+                          id == 4
+                              ? Container(
+                                  height: 30,
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 15),
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: primaryColor),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.check,
+                                      size: 14,
+                                      color: whiteColor,
+                                    ),
+                                  ),
+                                )
+                              : Radio(
+                                  value: 4,
+                                  groupValue: id,
+                                  activeColor: primaryColor,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      id = 4;
+                                      changeLocale(context, "fr");
+
+                                      Navigator.pop(context);
+                                    });
+                                  },
+                                )
+                        ],
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        id = 2;
+                        changeLocale(context, "sw");
+
+                        Navigator.pop(context);
+                      });
+                    },
+                    child: Container(
+                      height: 50,
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      margin: const EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        color: whiteColor,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: const [
+                          BoxShadow(
+                            offset: Offset(0.0, 2.0),
+                            color: Color(0xffEDEDED),
+                            blurRadius: 2.0,
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Image.asset(
+                                "assets/images/icons/swa.png",
+                                height: 25,
+                                width: 25,
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                translate("app_txt_swahili"),
+                                style: GoogleFonts.poppins(
+                                    color: blackColor,
+                                    fontWeight: FontWeight.w300,
+                                    fontSize: 15),
+                              )
+                            ],
+                          ),
+                          id == 2
+                              ? Container(
+                                  height: 30,
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 15),
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: primaryColor),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.check,
+                                      size: 14,
+                                      color: whiteColor,
+                                    ),
+                                  ),
+                                )
+                              : Radio(
+                                  value: 2,
+                                  groupValue: id,
+                                  activeColor: primaryColor,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      id = 2;
+                                      changeLocale(context, "sw");
+
+                                      Navigator.pop(context);
+                                    });
+                                  },
+                                )
+                        ],
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        id = 3;
+                        changeLocale(context, "rw");
+
+                        Navigator.pop(context);
+                      });
+                    },
+                    child: Container(
+                      height: 50,
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      margin: const EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        color: whiteColor,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: const [
+                          BoxShadow(
+                            offset: Offset(0.0, 2.0),
+                            color: Color(0xffEDEDED),
+                            blurRadius: 2.0,
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Image.asset(
+                                "assets/images/icons/rw_flag.png",
+                                height: 25,
+                                width: 25,
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                translate("app_txt_rwanda"),
+                                style: GoogleFonts.poppins(
+                                    color: blackColor,
+                                    fontWeight: FontWeight.w300,
+                                    fontSize: 15),
+                              )
+                            ],
+                          ),
+                          id == 3
+                              ? Container(
+                                  height: 30,
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 15),
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: primaryColor),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.check,
+                                      size: 14,
+                                      color: whiteColor,
+                                    ),
+                                  ),
+                                )
+                              : Radio(
+                                  value: 3,
+                                  groupValue: id,
+                                  activeColor: primaryColor,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      id = 3;
+                                      changeLocale(context, "rw");
+
+                                      Navigator.pop(context);
+                                    });
+                                  },
+                                )
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+                child: Text(translate("app_txt_cancel"),
+                    style: GoogleFonts.poppins(fontSize: 17, color: redColor)),
+                onPressed: () {
+                  Navigator.pop(context);
+                }),
+          ],
         );
       },
     );
   }
-  
-  
-  
+
   @override
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+    var localizationDelegate = LocalizedApp.of(context).delegate;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Material(
@@ -644,7 +604,7 @@ class _LoginState extends State<Login> {
                     padding: const EdgeInsets.all(10.0),
                     child: InkWell(
                       onTap: () {
-                       showCustomDialog(context);
+                        showCustomDialog(context);
                       },
                       child: Row(
                         children: [
@@ -660,27 +620,30 @@ class _LoginState extends State<Login> {
                             width: 30,
                             height: 30,
                             decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                    color: primaryOverlayColor, width: 2),
-                                image: const DecorationImage(
-                                    // image: ExactAssetImage(context
-                                    //             .locale.languageCode
-                                    //             .toString() ==
-                                    //         "rw"
-                                    //     ? "assets/images/icons/rw_flag.png"
-                                    //     : context.locale.languageCode
-                                    //                 .toString() ==
-                                    //             "sw"
-                                    //         ? "assets/images/icons/swa.png"
-                                    //         : context.locale.languageCode
-                                    //                     .toString() ==
-                                    //                 "fr"
-                                    //             ? "assets/images/icons/fr.png"
-                                    //             : "assets/images/icons/eng.png"),
-                                    image: ExactAssetImage(
-                                        "assets/images/icons/eng.png"),
-                                    fit: BoxFit.cover)),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: primaryOverlayColor,
+                                width: 2,
+                              ),
+                              image: DecorationImage(
+                                image: ExactAssetImage(
+                                  localizationDelegate
+                                              .currentLocale.languageCode ==
+                                          "rw"
+                                      ? "assets/images/icons/rw_flag.png"
+                                      : localizationDelegate
+                                                  .currentLocale.languageCode ==
+                                              "sw"
+                                          ? "assets/images/icons/swa.png"
+                                          : localizationDelegate.currentLocale
+                                                      .languageCode ==
+                                                  "fr"
+                                              ? "assets/images/icons/fr.png"
+                                              : "assets/images/icons/eng.png",
+                                ),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -821,47 +784,64 @@ class _LoginState extends State<Login> {
                         ],
                       ),
                     ),
-                    Visibility(
-                        visible: !isAdmin,
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 10),
-                          padding: const EdgeInsets.only(top: 10),
-                          height: 300,
-                          child: ListView(
-                            children: List.generate(countries.length, (index) {
-                              CountryModel country = countries[index];
-                              return CountryItem(
-                                selectedId: _selectedCountry != null
-                                    ? _selectedCountry!.countryCode!
-                                    : "",
-                                id: country.countryCode!,
-                                image: Image.network(
-                                  "https://sdacfms.com/assets/flags/${country.countryFlag}",
-                                  scale: 2,
-                                  height: 30,
-                                  width: 35,
-                                ),
-                                title: country.countryName!,
-                                code: country.countryCode ?? "",
-                                onTap: () => {
-                                  setState(() {
-                                    if (selectedTab == 1) {
-                                      _selectedCountry = country;
-                                      _selectedCodeUrl = country.countryShort;
-                                      _isRegistered = false;
-                                      _isApiLoading = false;
-                                    } else {
-                                      isAdmin = true;
-                                      _selectedCountry = null;
-                                      _selectedCodeUrl = country.countryShort;
-                                    }
-                                  }),
-                                  setCountryCode(_selectedCodeUrl ?? "")
-                                },
-                              );
-                            }),
-                          ),
-                        )),
+                    BlocBuilder<CountryBloc, CountryState>(
+                      builder: (context, state) {
+                        if (state is CountryLoading) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        } else if (state is CountryLoaded) {
+                          return Container(
+                            margin:
+                                const EdgeInsets.symmetric(horizontal: 10),
+                            padding: const EdgeInsets.only(top: 10),
+                            height: 300,
+                            child: ListView(
+                              children:
+                                  List.generate(state.countries.length, (index) {
+                                CountryModel country = state.countries[index];
+                                return CountryItem(
+                                  selectedId: _selectedCountry != null
+                                      ? _selectedCountry!.countryCode!
+                                      : "",
+                                  id: country.countryCode!,
+                                  image: Image.network(
+                                    "https://sdacfms.com/assets/flags/${country.countryFlag}",
+                                    scale: 2,
+                                    height: 30,
+                                    width: 35,
+                                  ),
+                                  title: country.countryName!,
+                                  code: country.countryCode ?? "",
+                                  onTap: () => {
+                                    setState(() {
+                                      if (selectedTab == 1) {
+                                        _selectedCountry = country;
+                                        _selectedCodeUrl =
+                                            country.countryShort;
+                                        _isRegistered = false;
+                                        _isApiLoading = false;
+                                      } else {
+                                        isAdmin = true;
+                                        _selectedCountry = null;
+                                        _selectedCodeUrl =
+                                            country.countryShort;
+                                      }
+                                    }),
+                                    setCountryCode(_selectedCodeUrl ?? "")
+                                  },
+                                );
+                              }),
+                            ),
+                          );
+                        } else if (state is CountryError) {
+                          return Center(
+                            child: Text(state.errorMessage,
+                                style: TextStyle(color: Colors.red)),
+                          );
+                        }
+                        return const Center(child: Text('Select a country'));
+                      },
+                    ),
                     Visibility(
                       visible: !_showWebReceipt && isAdmin,
                       child: Form(
@@ -1339,18 +1319,18 @@ class _LoginState extends State<Login> {
       if (kDebugMode) {
         print(body);
       }
-      // Navigator.push(
-      //     context,
-      //     MyPageRoute(
-      //         widget: Verification(
-      //       memberId: memberId,
-      //       sysMember: sysMember,
-      //       sysChurch: sysChurch,
-      //       sysGroup: sysGroup,
-      //       otp: body['otp'],
-      //       phone: mPhoneFound,
-      //       memberName: mNameFound,
-      //     )));
+      Navigator.push(
+          context,
+          MyPageRoute(
+              widget: Verification(
+            memberId: memberId,
+            sysMember: sysMember,
+            sysChurch: sysChurch,
+            sysGroup: sysGroup,
+            otp: body['otp'],
+            phone: mPhoneFound,
+            memberName: mNameFound,
+          )));
     } else {
       if (kDebugMode) {
         print("sms not sent");

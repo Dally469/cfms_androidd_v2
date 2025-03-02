@@ -1,25 +1,27 @@
+import 'package:cfms/models/country_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/repositories/country_repository.dart';
 import 'country_event.dart';
 import 'country_state.dart';
 
 class CountryBloc extends Bloc<CountryEvent, CountryState> {
-  final CountryRepository repository;
+  final CountryRepository countryRepository;
 
-  CountryBloc({required this.repository}) : super(CountryInitial()) {
-    on<FetchCountries>(_onFetchCountries);
+  CountryBloc({required this.countryRepository}) : super(CountryInitial()) {
+    on<FetchCountries>(_onFetchCountries); // Register the event handler
   }
 
+  // Event handler for FetchCountries
   Future<void> _onFetchCountries(
-    FetchCountries event,
-    Emitter<CountryState> emit,
-  ) async {
-    emit(CountryLoading());
+      FetchCountries event, Emitter<CountryState> emit) async {
     try {
-      final countries = await repository.getCountrySuggestions(event.query);
-      emit(CountryLoaded(countries));
+      emit(CountryLoading());
+      final countries = await countryRepository.fetchCountries();
+      emit(CountryLoaded(countries: countries));
     } catch (e) {
-      emit(CountryError('Failed to fetch countries: ${e.toString()}'));
+      emit(CountryError(
+          errorMessage:
+              'Failed to load countries: ${e.toString()}')); // Pass error message
     }
   }
 }

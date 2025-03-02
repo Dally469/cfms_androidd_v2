@@ -62,7 +62,7 @@ class Data {
   String? photo;
   String? locationId;
   String? networkOperator;
-  String? status;
+  dynamic status;
   String? createdAt;
   String? updatedAt;
   Null? deletedAt;
@@ -104,8 +104,10 @@ class Data {
     photo = json['photo'];
     locationId = json['locationId'];
     networkOperator = json['networkOperator'];
-    status = json['status'];
-    createdAt = json['created_at'];
+    status = json['status'] is int
+        ? json['status'].toString()
+        : json[
+            'status']; // Convert int to String if necessary    createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     // deletedAt = json['deleted_at'];
     cHURCHCode = json['CHURCHCode'];
